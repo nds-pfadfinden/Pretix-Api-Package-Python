@@ -1,4 +1,4 @@
-# pretix_api
+# Pretix Api Python
 
 Usefull scripts for Pretix
 
