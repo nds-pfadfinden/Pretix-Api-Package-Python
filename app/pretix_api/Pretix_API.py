@@ -137,8 +137,14 @@ class Pretix_API:
         raise Exception("Error : Wrong Content parameter")
 
     def change_answer(
-        self, event_slug: str, position_id: int, question_id: int, new_answer: str
+        self,
+        event_slug: str,
+        question_identifier: str,
+        position_id: int,
+        new_answer: str,
     ):
+
+        question_id = self.get_question_id(event_slug, question_identifier)
 
         r = self.s.get(
             f'{self.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/'
@@ -233,3 +239,11 @@ class Pretix_API:
             self.download_invoice(event_slug, invoice["number"], path)
 
         return
+
+    def get_question_id(self, event_slug, identifier: str) -> int:
+        r = self.s.get(f'{self.config["events_url"]}{event_slug}/questions/')
+        questions = self._check_response(r).get("results", [])
+        for q in questions:
+            if q.get("identifier") == identifier:
+                return int(q["id"])
+        raise KeyError(f"Question identifier not found: {identifier}")
