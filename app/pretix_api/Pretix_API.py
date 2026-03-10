@@ -240,6 +240,8 @@ class Pretix_API:
 
         return
 
+    # questions
+
     def get_question_id(self, event_slug, identifier: str) -> int:
         r = self.s.get(f'{self.config["events_url"]}{event_slug}/questions/')
         questions = self._check_response(r).get("results", [])
@@ -247,3 +249,9 @@ class Pretix_API:
             if q.get("identifier") == identifier:
                 return int(q["id"])
         raise KeyError(f"Question identifier not found: {identifier}")
+
+    def create_question(self, event_slug: str, data: dict):
+        r = self.s.post(
+            f'{self.config["events_url"]}{event_slug}/questions/', json=data
+        )
+        return self._check_response(r)
