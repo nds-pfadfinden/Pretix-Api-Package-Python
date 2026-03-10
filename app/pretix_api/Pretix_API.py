@@ -242,14 +242,6 @@ class Pretix_API:
 
     # questions
 
-    def get_question_id(self, event_slug, identifier: str) -> int:
-        r = self.s.get(f'{self.config["events_url"]}{event_slug}/questions/')
-        questions = self._check_response(r).get("results", [])
-        for q in questions:
-            if q.get("identifier") == identifier:
-                return int(q["id"])
-        raise KeyError(f"Question identifier not found: {identifier}")
-
     def create_question(self, event_slug: str, data: dict):
         r = self.s.post(
             f'{self.config["events_url"]}{event_slug}/questions/', json=data
@@ -257,7 +249,16 @@ class Pretix_API:
         return self._check_response(r)
 
     def get_questions(self, event_slug: str) -> list[dict]:
-        invoices = self._handle_pagination(
+        questions = self._handle_pagination(
             self.config["events_url"] + event_slug + "/questions/"
         )
-        return invoices
+        return questions
+
+    def get_question_id(self, event_slug: str, identifier: str) -> int:
+        questions = self.get_questions(event_slug=event_slug)
+        identifier_norm = str(identifier).strip().lower()
+        for q in questions:
+            if str(q.get("identifier", "")).strip().lower() == identifier_norm:
+                return int(q["id"])
+
+        raise KeyError(f"Question identifier not found: {identifier}")
