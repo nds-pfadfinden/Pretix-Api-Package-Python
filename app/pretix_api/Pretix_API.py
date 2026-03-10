@@ -255,3 +255,9 @@ class Pretix_API:
             f'{self.config["events_url"]}{event_slug}/questions/', json=data
         )
         return self._check_response(r)
+
+    def get_questions(self, event_slug: str) -> list[dict]:
+        invoices = self._handle_pagination(
+            self.config["events_url"] + event_slug + "/questions/"
+        )
+        return invoices
