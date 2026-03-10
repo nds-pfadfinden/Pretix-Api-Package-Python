@@ -254,13 +254,4 @@ class Pretix_API:
         r = self.s.post(
             f'{self.config["events_url"]}{event_slug}/questions/', json=data
         )
-        print("status:", r.status_code)
-        print("text:", r.text)
-        try:
-            print("json:", r.json())
-        except Exception:
-            pass
-
-        r.raise_for_status()
-        return r.json()
         return self._check_response(r)
