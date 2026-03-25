@@ -1,7 +1,7 @@
 import json
 
 import requests
-from typing import List, Dict
+from typing import List, Dict, string
 
 
 class Pretix_API:
@@ -196,6 +196,35 @@ class Pretix_API:
             question["item"] = [item["id"]]
             self.create_question(event_slug, question)
 
+    def add_items_with_questions_by_question_name(
+        self, event_slug: str, item: dict, question_identifiers: List[str]
+    ):
+        item = self.add_item(event_slug=event_slug, data=item)
+        existing_questions = self.get_questions(event_slug=event_slug)
+
+        for new_question in question_identifiers:
+            identifier_norm = str(new_question).strip().lower()
+            current_question = None
+
+            for q in existing_questions:
+                if str(q.get("identifier", "")).strip().lower() == identifier_norm:
+                    current_question = q
+                    break
+
+            if current_question is None:
+                raise KeyError(f'Question with identifier "{new_question}" not found')
+
+            current_items = current_question.get("items", [])
+
+            if item["id"] not in current_items:
+                current_items = current_items + [item["id"]]
+
+                self.patch_question(
+                    event_slug, current_question["id"], {"items": current_items}
+                )
+
+        return item
+
     # Patch Items
 
     def change_item(self, id: int, event_slug: str, update_dict: dict):
@@ -268,6 +297,13 @@ class Pretix_API:
             self.config["events_url"] + event_slug + "/questions/"
         )
         return questions
+
+    def patch_question(self, event_slug: str, question_id: int, data: dict) -> dict:
+        r = self.s.patch(
+            f'{self.config["events_url"]}{event_slug}/questions/{question_id}/',
+            json=data,
+        )
+        return self._check_response(r)
 
     def get_question_id(self, event_slug: str, identifier: str) -> int:
         questions = self.get_questions(event_slug=event_slug)
