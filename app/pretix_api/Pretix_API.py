@@ -1,6 +1,7 @@
 import json
 
 import requests
+from typing import List, Dict
 
 
 class Pretix_API:
@@ -180,6 +181,20 @@ class Pretix_API:
             self.config["events_url"] + event_slug + "/items"
         )
         return items
+
+    # create item
+    def add_item(self, event_slug: str, data: dict):
+        r = self.s.post(f'{self.config["events_url"]}{event_slug}/items/', json=data)
+        return self._check_response(r)
+
+    def add_items_with_questions(
+        self, event_slug: str, item: dict, questions: List[Dict]
+    ):
+        item = self.add_item(event_slug=event_slug, data=item)
+
+        for question in questions:
+            question["item"] = [item["id"]]
+            self.create_question(event_slug, question)
 
     # Patch Items
 
