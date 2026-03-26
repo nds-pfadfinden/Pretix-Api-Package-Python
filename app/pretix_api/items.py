@@ -51,7 +51,7 @@ class ItemsApi(BaseAPI):
             if item["id"] not in current_items:
                 current_items = current_items + [item["id"]]
 
-                self.patch_question(
+                self.client.questions.patch(
                     event_slug, current_question["id"], {"items": current_items}
                 )
 
