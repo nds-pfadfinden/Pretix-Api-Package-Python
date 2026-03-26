@@ -9,7 +9,7 @@ class PretixClient:
         api_token (String) -> API Token for the Pretix-Organizer (default from .env file)
         """
 
-        self.s = requests.Session()
+        self.session = requests.Session()
         self.config = {
             "organizer_url": organizer_url,
             "events_url": f"{organizer_url}events/",
