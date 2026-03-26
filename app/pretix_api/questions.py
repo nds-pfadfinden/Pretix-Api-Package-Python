@@ -22,11 +22,11 @@ class QuestionsApi(BaseAPI):
         )
         return self._check_response(r)
 
-    def get_id(self, event_slug: str, identifier: str) -> int:
+    def get_by_name(self, event_slug: str, identifier: str) -> int:
         questions = self.get(event_slug=event_slug)
         identifier_norm = str(identifier).strip().lower()
         for q in questions:
             if str(q.get("identifier", "")).strip().lower() == identifier_norm:
-                return int(q["id"])
+                return q
 
         raise KeyError(f"Question identifier not found: {identifier}")
