@@ -45,16 +45,3 @@ class PretixClient:
     def _check_response(self, response):
         response.raise_for_status()
         return response.json()
-
-    def _handle_pagination(self, url):
-        data = []
-        while True:
-            r = self.session.get(url)
-            self._check_response(r)
-            data.extend(r.json()["results"])
-
-            if not r.json()["next"]:
-                break
-            url = r.json()["next"]
-
-        return data

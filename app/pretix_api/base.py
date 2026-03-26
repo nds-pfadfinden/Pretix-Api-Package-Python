@@ -20,3 +20,16 @@ class BaseAPI:
     def _delete(self, url: str):
         r = self.client.session.delete(url)
         return self.client._check_response(r)
+
+    def _handle_pagination(self, url):
+        data = []
+        while True:
+            r = self.session.get(url)
+            self._check_response(r)
+            data.extend(r.json()["results"])
+
+            if not r.json()["next"]:
+                break
+            url = r.json()["next"]
+
+        return data
