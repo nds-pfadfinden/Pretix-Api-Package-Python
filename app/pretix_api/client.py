@@ -41,7 +41,3 @@ class PretixClient:
     def __del__(self) -> None:
         self.session.close()
         return
-
-    def _check_response(self, response):
-        response.raise_for_status()
-        return response.json()

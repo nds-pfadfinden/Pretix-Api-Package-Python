@@ -24,7 +24,7 @@ class BaseAPI:
     def _handle_pagination(self, url):
         data = []
         while True:
-            r = self.session.get(url)
+            r = self.client.session.get(url)
             self._check_response(r)
             data.extend(r.json()["results"])
 
@@ -33,3 +33,7 @@ class BaseAPI:
             url = r.json()["next"]
 
         return data
+
+    def _check_response(self, response):
+        response.raise_for_status()
+        return response.json()
