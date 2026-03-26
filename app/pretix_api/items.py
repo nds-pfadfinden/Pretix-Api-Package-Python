@@ -32,7 +32,7 @@ class ItemsApi(BaseAPI):
         self, event_slug: str, item: dict, question_identifiers: List[str]
     ):
         item = self.add_item(event_slug=event_slug, data=item)
-        existing_questions = self.get_questions(event_slug=event_slug)
+        existing_questions = self.client.questions.get_questions(event_slug=event_slug)
 
         for new_question in question_identifiers:
             identifier_norm = str(new_question).strip().lower()
