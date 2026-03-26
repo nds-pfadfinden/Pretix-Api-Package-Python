@@ -11,11 +11,13 @@ class QuotasApi(BaseAPI):
         return quotas
 
     def create(self, event_slug: str, data: dict):
-        r = self.s.post(f'{self.config["events_url"]}{event_slug}/quotas/', json=data)
+        r = self.session.post(
+            f'{self.config["events_url"]}{event_slug}/quotas/', json=data
+        )
         return self._check_response(r)
 
     def update(self, event_slug: str, quota_id: int, update_dict: dict):
-        r = self.s.patch(
+        r = self.session.patch(
             f'{self.config["events_url"]}{event_slug}/quotas/{quota_id}/',
             json=update_dict,
         )

@@ -5,7 +5,7 @@ import json
 class EventsApi(BaseAPI):
 
     def get_event(self, slug):
-        r = self.s.get(f'{self.config["events_url"]}{slug}/')
+        r = self.session.get(f'{self.config["events_url"]}{slug}/')
         return self.client._check_response(r)
 
     def get_events(self):
@@ -31,7 +31,7 @@ class EventsApi(BaseAPI):
             data = json.load(read_file)
         data.update(update_dict)
 
-        r = self.client.s.post(self.config["events_url"], json=data)
+        r = self.client.session.post(self.config["events_url"], json=data)
 
         return self.client._check_response(r)
 
@@ -47,7 +47,7 @@ class EventsApi(BaseAPI):
             response status
         """
 
-        r = self.client.s.post(
+        r = self.client.session.post(
             url=f'{self.config["events_url"]}{event_slug}/clone/', json=update_dict
         )
 
@@ -56,11 +56,11 @@ class EventsApi(BaseAPI):
     # Patch Events
 
     def change(self, event_slug: str, data: dict):
-        r = self.s.patch(f'{self.config["events_url"]}{event_slug}/', json=data)
+        r = self.session.patch(f'{self.config["events_url"]}{event_slug}/', json=data)
         return self._check_response(r)
 
     # Delete Events
 
     def delete(self, event_slug: str):
-        r = self.s.delete(f'{self.config["events_url"]}{event_slug}/')
+        r = self.session.delete(f'{self.config["events_url"]}{event_slug}/')
         return self._check_response(r)

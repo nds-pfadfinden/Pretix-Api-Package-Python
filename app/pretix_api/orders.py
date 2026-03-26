@@ -38,7 +38,7 @@ class OrdersApi(BaseAPI):
 
         question_id = self.get_question_id(event_slug, question_identifier)
 
-        r = self.s.get(
+        r = self.session.get(
             f'{self.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/'
         )
 
@@ -58,7 +58,7 @@ class OrdersApi(BaseAPI):
 
         # 3. PATCH full answers list
         update_dict = {"answers": answers}
-        r = self.s.patch(
+        r = self.session.patch(
             f'{self.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/',
             json=update_dict,
         )

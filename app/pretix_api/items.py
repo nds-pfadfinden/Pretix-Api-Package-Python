@@ -14,7 +14,9 @@ class ItemsApi(BaseAPI):
 
     # create item
     def add_item(self, event_slug: str, data: dict):
-        r = self.s.post(f'{self.config["events_url"]}{event_slug}/items/', json=data)
+        r = self.session.post(
+            f'{self.config["events_url"]}{event_slug}/items/', json=data
+        )
         return self._check_response(r)
 
     def add_items_with_questions(
@@ -58,7 +60,7 @@ class ItemsApi(BaseAPI):
     # Patch Items
 
     def change_item(self, id: int, event_slug: str, update_dict: dict):
-        r = self.s.patch(
+        r = self.session.patch(
             f'{self.config["events_url"]}{event_slug}/items/{str(id)}/',
             json=update_dict,
         )

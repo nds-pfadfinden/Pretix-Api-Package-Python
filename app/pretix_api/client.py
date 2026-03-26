@@ -18,7 +18,7 @@ class PretixClient:
             "Authorization": f"Token {api_token}",
             "Content-Type": "application/json",
         }
-        self.s.headers.update(self.authHeader)
+        self.session.headers.update(self.authHeader)
 
         from .items import ItemsApi
         from .questions import QuestionsApi
@@ -39,7 +39,7 @@ class PretixClient:
         self.quotas = QuotasApi(self)
 
     def __del__(self) -> None:
-        self.s.close()
+        self.session.close()
         return
 
     def _check_response(self, response):
@@ -49,7 +49,7 @@ class PretixClient:
     def _handle_pagination(self, url):
         data = []
         while True:
-            r = self.s.get(url)
+            r = self.session.get(url)
             self._check_response(r)
             data.extend(r.json()["results"])
 
