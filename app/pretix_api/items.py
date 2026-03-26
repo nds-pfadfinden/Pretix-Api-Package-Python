@@ -8,14 +8,14 @@ class ItemsApi(BaseAPI):
 
     def get_items(self, event_slug: str):
         items = self._handle_pagination(
-            self.config["events_url"] + event_slug + "/items"
+            self.client.config["events_url"] + event_slug + "/items"
         )
         return items
 
     # create item
     def add_item(self, event_slug: str, data: dict):
         r = self.client.session.post(
-            f'{self.config["events_url"]}{event_slug}/items/', json=data
+            f'{self.client.config["events_url"]}{event_slug}/items/', json=data
         )
         return self._check_response(r)
 
@@ -61,7 +61,7 @@ class ItemsApi(BaseAPI):
 
     def change_item(self, id: int, event_slug: str, update_dict: dict):
         r = self.client.session.patch(
-            f'{self.config["events_url"]}{event_slug}/items/{str(id)}/',
+            f'{self.client.config["events_url"]}{event_slug}/items/{str(id)}/',
             json=update_dict,
         )
         return self._check_response(r)

@@ -6,7 +6,7 @@ class InvoicesApi(BaseAPI):
 
     def get_invoices(self, event_slug: str) -> list[dict]:
         invoices = self._handle_pagination(
-            self.config["events_url"] + event_slug + "/invoices/"
+            self.client.config["events_url"] + event_slug + "/invoices/"
         )
         return invoices
 
@@ -17,7 +17,7 @@ class InvoicesApi(BaseAPI):
             invoice_filename = invoice_number
 
         invoice_pdf_r = self.client.session.get(
-            f'{self.config["events_url"]}{event_slug}/invoices/{invoice_number}/download/'
+            f'{self.client.config["events_url"]}{event_slug}/invoices/{invoice_number}/download/'
         )
         with open(path + f"\\{invoice_filename}.pdf", "wb") as f:
             f.write(invoice_pdf_r.content)

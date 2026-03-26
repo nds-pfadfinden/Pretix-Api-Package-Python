@@ -5,11 +5,11 @@ import json
 class EventsApi(BaseAPI):
 
     def get_event(self, slug):
-        r = self.client.session.get(f'{self.config["events_url"]}{slug}/')
+        r = self.client.session.get(f'{self.client.config["events_url"]}{slug}/')
         return self.client._check_response(r)
 
     def get_events(self):
-        return self.client._handle_pagination(self.config["events_url"])
+        return self.client._handle_pagination(self.client.config["events_url"])
 
     # POST Requests for Events
 
@@ -31,7 +31,7 @@ class EventsApi(BaseAPI):
             data = json.load(read_file)
         data.update(update_dict)
 
-        r = self.client.session.post(self.config["events_url"], json=data)
+        r = self.client.session.post(self.client.config["events_url"], json=data)
 
         return self.client._check_response(r)
 
@@ -48,7 +48,8 @@ class EventsApi(BaseAPI):
         """
 
         r = self.client.session.post(
-            url=f'{self.config["events_url"]}{event_slug}/clone/', json=update_dict
+            url=f'{self.client.config["events_url"]}{event_slug}/clone/',
+            json=update_dict,
         )
 
         return self._check_response(r)
@@ -57,12 +58,14 @@ class EventsApi(BaseAPI):
 
     def change(self, event_slug: str, data: dict):
         r = self.client.session.patch(
-            f'{self.config["events_url"]}{event_slug}/', json=data
+            f'{self.client.config["events_url"]}{event_slug}/', json=data
         )
         return self._check_response(r)
 
     # Delete Events
 
     def delete(self, event_slug: str):
-        r = self.client.session.delete(f'{self.config["events_url"]}{event_slug}/')
+        r = self.client.session.delete(
+            f'{self.client.config["events_url"]}{event_slug}/'
+        )
         return self._check_response(r)

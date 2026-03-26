@@ -5,7 +5,9 @@ import json
 class OrdersApi(BaseAPI):
     def get(self, slug: str):
         orders = self._handle_pagination(
-            self.config["events_url"] + slug + "/orders?include_canceled_positions=true"
+            self.client.config["events_url"]
+            + slug
+            + "/orders?include_canceled_positions=true"
         )
         return orders
 
@@ -39,7 +41,7 @@ class OrdersApi(BaseAPI):
         question_id = self.get_question_id(event_slug, question_identifier)
 
         r = self.client.session.get(
-            f'{self.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/'
+            f'{self.client.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/'
         )
 
         postions = self._check_response(r)
@@ -59,7 +61,7 @@ class OrdersApi(BaseAPI):
         # 3. PATCH full answers list
         update_dict = {"answers": answers}
         r = self.client.session.patch(
-            f'{self.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/',
+            f'{self.client.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/',
             json=update_dict,
         )
         return self._check_response(r)
