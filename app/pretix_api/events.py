@@ -31,7 +31,7 @@ class EventsApi(BaseAPI):
             data = json.load(read_file)
         data.update(update_dict)
 
-        r = self.client.client.session.post(self.config["events_url"], json=data)
+        r = self.client.session.post(self.config["events_url"], json=data)
 
         return self.client._check_response(r)
 
@@ -47,7 +47,7 @@ class EventsApi(BaseAPI):
             response status
         """
 
-        r = self.client.client.session.post(
+        r = self.client.session.post(
             url=f'{self.config["events_url"]}{event_slug}/clone/', json=update_dict
         )
 
