@@ -16,7 +16,7 @@ class InvoicesApi(BaseAPI):
         if invoice_filename == "":
             invoice_filename = invoice_number
 
-        invoice_pdf_r = self.session.get(
+        invoice_pdf_r = self.client.session.get(
             f'{self.config["events_url"]}{event_slug}/invoices/{invoice_number}/download/'
         )
         with open(path + f"\\{invoice_filename}.pdf", "wb") as f:

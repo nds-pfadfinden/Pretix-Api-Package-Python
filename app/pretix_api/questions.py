@@ -4,7 +4,7 @@ import json
 
 class QuestionsApi(BaseAPI):
     def create(self, event_slug: str, data: dict):
-        r = self.session.post(
+        r = self.client.session.post(
             f'{self.config["events_url"]}{event_slug}/questions/', json=data
         )
         return self._check_response(r)
@@ -16,7 +16,7 @@ class QuestionsApi(BaseAPI):
         return questions
 
     def patch(self, event_slug: str, question_id: int, data: dict) -> dict:
-        r = self.session.patch(
+        r = self.client.session.patch(
             f'{self.config["events_url"]}{event_slug}/questions/{question_id}/',
             json=data,
         )
