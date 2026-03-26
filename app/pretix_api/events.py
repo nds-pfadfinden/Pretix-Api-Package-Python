@@ -9,7 +9,7 @@ class EventsApi(BaseAPI):
         return self.client._check_response(r)
 
     def get_events(self):
-        return self.client._handle_pagination(self.client.config["events_url"])
+        return self._handle_pagination(self.client.config["events_url"])
 
     # POST Requests for Events
 
