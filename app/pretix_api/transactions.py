@@ -1,8 +1,7 @@
 from .base import BaseAPI
-import json
 
 
-class Transactions(BaseAPI):
+class TransactionsApi(BaseAPI):
 
     def get(self, event_slug: str) -> list:
         quotas = self._handle_pagination(

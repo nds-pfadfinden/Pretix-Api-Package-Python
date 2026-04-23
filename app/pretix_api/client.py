@@ -37,6 +37,7 @@ class PretixClient:
         self.invoices = InvoicesApi(self)
         self.orders = OrdersApi(self)
         self.quotas = QuotasApi(self)
+        self.transactions = TransactionsApi(self)
 
     def __del__(self) -> None:
         self.session.close()
