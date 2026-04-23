@@ -1,4 +1,14 @@
 import requests
+from .items import ItemsApi
+from .questions import QuestionsApi
+from .categories import CategoriesApi
+
+from .categories import CategoriesApi
+from .events import EventsApi
+from .invoices import InvoicesApi
+from .orders import OrdersApi
+from .quotas import QuotasApi
+from .transactions import TransactionsApi
 
 
 class PretixClient:
@@ -19,16 +29,6 @@ class PretixClient:
             "Content-Type": "application/json",
         }
         self.session.headers.update(self.authHeader)
-
-        from .items import ItemsApi
-        from .questions import QuestionsApi
-        from .categories import CategoriesApi
-
-        from .categories import CategoriesApi
-        from .events import EventsApi
-        from .invoices import InvoicesApi
-        from .orders import OrdersApi
-        from .quotas import QuotasApi
 
         self.items = ItemsApi(self)
         self.questions = QuestionsApi(self)
