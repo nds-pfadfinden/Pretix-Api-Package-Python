@@ -37,6 +37,9 @@ class OrdersApi(BaseAPI):
         position_id: int,
         new_answer: str,
     ):
+        if new_answer is None or str(new_answer).strip() == "":
+            return None
+
         question = self.client.questions.get_by_name(event_slug, question_identifier)
         question_id = question["id"]
 
