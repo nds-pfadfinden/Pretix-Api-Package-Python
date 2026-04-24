@@ -37,8 +37,8 @@ class OrdersApi(BaseAPI):
         position_id: int,
         new_answer: str,
     ):
-        question_id = self.client.questions.get_by_name(event_slug, question_identifier)
-
+        question = self.client.questions.get_by_name(event_slug, question_identifier)
+        question_id = question["id"]
         r = self.client.session.get(
             f'{self.client.config["events_url"]}{event_slug}/orderpositions/{position_id}/'
         )
