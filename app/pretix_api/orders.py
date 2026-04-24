@@ -30,7 +30,7 @@ class OrdersApi(BaseAPI):
             answers.extend(p["answers"])
         return answers
 
-    def patch(
+    def patch_position(
         self,
         event_slug: str,
         question_identifier: str,
