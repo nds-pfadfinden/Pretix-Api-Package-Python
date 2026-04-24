@@ -37,31 +37,40 @@ class OrdersApi(BaseAPI):
         position_id: int,
         new_answer: str,
     ):
-
         question_id = self.client.questions.get_by_name(event_slug, question_identifier)
 
         r = self.client.session.get(
-            f'{self.client.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/'
+            f'{self.client.config["events_url"]}{event_slug}/orderpositions/{position_id}/'
         )
+        position = self._check_response(r)
 
-        postions = self._check_response(r)
-
-        answers = postions.get("answers")
+        answers = position.get("answers") or []
 
         updated = False
         for a in answers:
-            if int(a.get("question")) == question_id:
-                a["answer"] = new_answer
+            if int(a.get("question")) == int(question_id):
+                a["answer"] = str(new_answer)
                 updated = True
                 break
 
         if not updated:
-            answers.append({"question": question_id, "answer": new_answer})
+            answers.append(
+                {
+                    "question": int(question_id),
+                    "answer": str(new_answer),
+                }
+            )
 
-        # 3. PATCH full answers list
         update_dict = {"answers": answers}
+
         r = self.client.session.patch(
-            f'{self.client.config["events_url"]}{event_slug}/orderpositions/{str(position_id)}/',
+            f'{self.client.config["events_url"]}{event_slug}/orderpositions/{position_id}/',
             json=update_dict,
         )
+
+        if not r.ok:
+            print("PATCH failed")
+            print(r.status_code)
+            print(r.text)
+
         return self._check_response(r)

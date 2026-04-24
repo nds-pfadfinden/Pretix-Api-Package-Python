@@ -35,5 +35,8 @@ class BaseAPI:
         return data
 
     def _check_response(self, response):
+        if not response.ok:
+            print(response.status_code)
+            print(response.text)
         response.raise_for_status()
         return response.json()
