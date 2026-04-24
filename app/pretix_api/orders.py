@@ -39,6 +39,7 @@ class OrdersApi(BaseAPI):
     ):
         question = self.client.questions.get_by_name(event_slug, question_identifier)
         question_id = question["id"]
+
         r = self.client.session.get(
             f'{self.client.config["events_url"]}{event_slug}/orderpositions/{position_id}/'
         )
@@ -46,7 +47,10 @@ class OrdersApi(BaseAPI):
 
         answers = position.get("answers") or []
 
+        answers = [a for a in answers if a.get("answer") not in [None, ""]]
+
         updated = False
+
         for a in answers:
             if int(a.get("question")) == int(question_id):
                 a["answer"] = str(new_answer)
@@ -61,16 +65,11 @@ class OrdersApi(BaseAPI):
                 }
             )
 
-        update_dict = {"answers": answers}
+        payload = {"answers": answers}
 
         r = self.client.session.patch(
             f'{self.client.config["events_url"]}{event_slug}/orderpositions/{position_id}/',
-            json=update_dict,
+            json=payload,
         )
-
-        if not r.ok:
-            print("PATCH failed")
-            print(r.status_code)
-            print(r.text)
 
         return self._check_response(r)
