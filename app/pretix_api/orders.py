@@ -13,7 +13,7 @@ class OrdersApi(BaseAPI):
 
     def get_events_and_orders(self):
 
-        events = self.events.get_events()
+        events = self.client.events.get_events()
         orders = []
 
         for event in events:
@@ -30,7 +30,7 @@ class OrdersApi(BaseAPI):
 
     def get_events_and_orders_and_positions(self):
 
-        orders = self.orders.get_events_and_orders()
+        orders = self.client.orders.get_events_and_orders()
         positions = []
         for order in orders:
             for pos in order.get("order_positions", []):
@@ -47,13 +47,19 @@ class OrdersApi(BaseAPI):
 
         items_by_id = {item["id"]: item for item in items}
         return [
-            {**pos, **{"item_" + k: v for k, v in items_by_id.get(pos["position_item"], {}).items()}}
+            {
+                **pos,
+                **{
+                    "item_" + k: v
+                    for k, v in items_by_id.get(pos["position_item"], {}).items()
+                },
+            }
             for pos in positions
         ]
 
     def get_events_and_orders_and_positions_and_payment_details(self):
 
-        positions = self.orders.get_events_and_orders_and_positions()
+        positions = self.client.orders.get_events_and_orders_and_positions()
         payment_details = []
 
         for pos in positions:
