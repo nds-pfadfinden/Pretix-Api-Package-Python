@@ -40,7 +40,16 @@ class OrdersApi(BaseAPI):
                         **{"position_" + k: v for k, v in pos.items()},
                     }
                 )
-        return positions
+
+        items = []
+        for slug in {order["event_slug"] for order in orders}:
+            items.extend(self.items.get_items(slug))
+
+        items_by_id = {item["id"]: item for item in items}
+        return [
+            {**pos, **{"item_" + k: v for k, v in items_by_id.get(pos["position_item"], {}).items()}}
+            for pos in positions
+        ]
 
     def get_events_and_orders_and_positions_and_payment_details(self):
 
@@ -53,7 +62,9 @@ class OrdersApi(BaseAPI):
                     **{"payment_" + k: v for k, v in pay.items()},
                     **pos,
                 }
-                for pay in self.orders.get_payment_details(pos["event_slug"], pos["order_code"])
+                for pay in self.orders.get_payment_details(
+                    pos["event_slug"], pos["order_code"]
+                )
             ]
             payment_details.extend(payment)
 
