@@ -11,7 +11,7 @@ class OrdersApi(BaseAPI):
         )
         return orders
 
-    def get_positions(self, slug: str, filter_by_item_id=None):
+    def get_positions(self, filter_by_item_id=None):
         orders = self.get()
 
         positions = []
@@ -76,3 +76,13 @@ class OrdersApi(BaseAPI):
         )
 
         return self._check_response(r)
+
+    def get_payment_details(self, slug: str, order_code: str, is_sepa: bool):
+        payment_details = self._handle_pagination(
+            self.client.config["events_url"]
+            + slug
+            + "/orders/"
+            + order_code
+            + "/payments/"
+        )
+        return payment_details
