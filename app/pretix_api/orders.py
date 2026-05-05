@@ -11,8 +11,56 @@ class OrdersApi(BaseAPI):
         )
         return orders
 
-    def get_positions(self, filter_by_item_id=None):
-        orders = self.get()
+    def get_events_and_orders(self):
+
+        events = self.events.get_events()
+        orders = []
+
+        for event in events:
+            order = [
+                {
+                    **{"order_" + k: v for k, v in order.items()},
+                    **event,
+                }
+                for order in self.orders.get(event["event_slug"])
+            ]
+            orders.extend(order)
+
+        return orders
+
+    def get_events_and_orders_and_positions(self):
+
+        orders = self.orders.get_events_and_orders()
+        positions = []
+        for order in orders:
+            for pos in order.get("order_positions", []):
+                positions.append(
+                    {
+                        "position_internal_id": pos["id"],
+                        **{"position_" + k: v for k, v in pos.items()},
+                    }
+                )
+        return positions
+
+    def get_events_and_orders_and_positions_and_payment_details(self):
+
+        positions = self.orders.get_events_and_orders_and_positions()
+        payment_details = []
+
+        for pos in positions:
+            payment = [
+                {
+                    **{"payment_" + k: v for k, v in pay.items()},
+                    **pos,
+                }
+                for pay in self.orders.get_payment_details(pos["event_slug"], pos["order_code"])
+            ]
+            payment_details.extend(payment)
+
+        return payment_details
+
+    def get_positions(self, slug: str, filter_by_item_id=None):
+        orders = self.get(slug)
 
         positions = []
         for o in orders:
@@ -23,7 +71,7 @@ class OrdersApi(BaseAPI):
             )
         return positions
 
-    def get_positions(self, slug: str, filter_by_item_id=None):
+    def get_answers(self, slug: str, filter_by_item_id=None):
         positions = self.get_positions(slug, filter_by_item_id)
         answers = []
         for p in positions:
@@ -77,7 +125,7 @@ class OrdersApi(BaseAPI):
 
         return self._check_response(r)
 
-    def get_payment_details(self, slug: str, order_code: str, is_sepa: bool):
+    def get_payment_details(self, slug: str, order_code: str):
         payment_details = self._handle_pagination(
             self.client.config["events_url"]
             + slug

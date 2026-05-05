@@ -6,10 +6,29 @@ class EventsApi(BaseAPI):
 
     def get_event(self, slug):
         r = self.client.session.get(f'{self.client.config["events_url"]}{slug}/')
+
         return self.client._check_response(r)
 
     def get_events(self):
-        return self._handle_pagination(self.client.config["events_url"])
+
+        events = self._handle_pagination(self.client.config["events_url"])
+        preferred_langs = ["en", "de"]
+        events = [
+            {
+                "event_slug": d["slug"],
+                "shop_name": next(
+                    (d["name"][lang] for lang in preferred_langs if lang in d["name"]),
+                    None,
+                ),
+                "public_url": d["public_url"],
+                "backend_url": self.config["organizer_url"] + d["slug"],
+            }
+            for d in events
+            if not "test" in d["slug"]
+        ]
+
+        events = events.add_prefix("events_")
+        return events
 
     # POST Requests for Events
 
