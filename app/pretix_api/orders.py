@@ -43,7 +43,7 @@ class OrdersApi(BaseAPI):
 
         items = []
         for slug in {order["event_slug"] for order in orders}:
-            items.extend(self.items.get_items(slug))
+            items.extend(self.client.items.get_items(slug))
 
         items_by_id = {item["id"]: item for item in items}
         return [
