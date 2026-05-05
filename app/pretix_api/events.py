@@ -21,13 +21,12 @@ class EventsApi(BaseAPI):
                     None,
                 ),
                 "public_url": d["public_url"],
-                "backend_url": self.config["organizer_url"] + d["slug"],
+                "backend_url": self.client.config["organizer_url"] + d["slug"],
             }
             for d in events
             if not "test" in d["slug"]
         ]
 
-        events = events.add_prefix("events_")
         return events
 
     # POST Requests for Events
