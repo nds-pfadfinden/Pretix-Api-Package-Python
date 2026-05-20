@@ -11,9 +11,12 @@ class OrdersApi(BaseAPI):
         )
         return orders
 
-    def get_events_and_orders(self):
+    def get_events_and_orders(self, get_payment_details=False):
+        print("Getting events ")
 
         events = self.client.events.get_events()
+        print("Getting Orders ")
+
         orders = []
 
         for event in events:
@@ -26,11 +29,25 @@ class OrdersApi(BaseAPI):
             ]
             orders.extend(order)
 
+        if get_payment_details:
+            orders_with_payments = []
+            for order in orders:
+                order_with_payments = [
+                    {
+                        **order,
+                        **{"payment_" + k: v for k, v in pay.items()},
+                    }
+                    for pay in self.get_payment_details(
+                        order["event_slug"], order["order_code"]
+                    )
+                ]
+                orders_with_payments.extend(order_with_payments)
         return orders
 
-    def get_events_and_orders_and_positions(self):
+    def get_events_and_orders_and_positions(self, get_payment_details=False):
+        orders = self.get_events_and_orders(get_payment_details)
+        print("Getting Positions ")
 
-        orders = self.get_events_and_orders()
         positions = []
         for order in orders:
             for pos in order.get("order_positions", []):
@@ -42,6 +59,7 @@ class OrdersApi(BaseAPI):
                     }
                 )
 
+        print("Getting items ")
         items = []
         for slug in {order["event_slug"] for order in orders}:
             items.extend(self.client.items.get_items(slug))
@@ -57,25 +75,6 @@ class OrdersApi(BaseAPI):
             }
             for pos in positions
         ]
-
-    def get_events_and_orders_and_positions_and_payment_details(self):
-
-        positions = self.get_events_and_orders_and_positions()
-        payment_details = []
-
-        for pos in positions:
-            payment = [
-                {
-                    **pos,
-                    **{"payment_" + k: v for k, v in pay.items()},
-                }
-                for pay in self.get_payment_details(
-                    pos["event_slug"], pos["position_order"]
-                )
-            ]
-            payment_details.extend(payment)
-
-        return payment_details
 
     def get_positions(self, slug: str, filter_by_item_id=None):
         orders = self.get(slug)
