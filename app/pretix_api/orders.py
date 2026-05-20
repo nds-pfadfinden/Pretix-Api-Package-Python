@@ -19,8 +19,8 @@ class OrdersApi(BaseAPI):
         for event in events:
             order = [
                 {
-                    **{"order_" + k: v for k, v in order.items()},
                     **event,
+                    **{"order_" + k: v for k, v in order.items()},
                 }
                 for order in self.get(event["event_slug"])
             ]
@@ -36,7 +36,7 @@ class OrdersApi(BaseAPI):
             for pos in order.get("order_positions", []):
                 positions.append(
                     {
-                        "event_slug": order["event_slug"],
+                        **order,
                         "position_internal_id": pos["id"],
                         **{"position_" + k: v for k, v in pos.items()},
                     }
@@ -66,11 +66,11 @@ class OrdersApi(BaseAPI):
         for pos in positions:
             payment = [
                 {
-                    **{"payment_" + k: v for k, v in pay.items()},
                     **pos,
+                    **{"payment_" + k: v for k, v in pay.items()},
                 }
                 for pay in self.get_payment_details(
-                    pos["event_slug"], pos["order_order_code"]
+                    pos["event_slug"], pos["position_order"]
                 )
             ]
             payment_details.extend(payment)
