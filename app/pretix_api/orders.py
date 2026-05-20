@@ -61,7 +61,7 @@ class OrdersApi(BaseAPI):
 
         for position in positions:
 
-            attendee_name_parts = position.get("attendee_name_parts")
+            attendee_name_parts = position.get("position_attendee_name_parts")
             if attendee_name_parts:
                 position["position_answers_" + "first_name"] = attendee_name_parts.get(
                     "given_name"
@@ -70,8 +70,8 @@ class OrdersApi(BaseAPI):
                     "family_name"
                 )
 
-            if position.get("answers"):
-                for answer in position["answers"]:
+            if position.get("position_answers"):
+                for answer in position["position_answers"]:
                     position["position_answers_" + answer["question_identifier"]] = (
                         answer["answer"]
                     )
