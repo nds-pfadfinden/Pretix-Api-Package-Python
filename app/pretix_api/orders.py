@@ -58,6 +58,7 @@ class OrdersApi(BaseAPI):
                         **{"position_" + k: v for k, v in pos.items()},
                     }
                 )
+            order.pop("order_positions")
 
         for position in positions:
 
@@ -75,6 +76,7 @@ class OrdersApi(BaseAPI):
                     position["position_answers_" + answer["question_identifier"]] = (
                         answer["answer"]
                     )
+                position.pop("position_answers")
 
         print("Getting items ")
         items = []
