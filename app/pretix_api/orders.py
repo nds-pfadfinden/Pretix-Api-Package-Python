@@ -59,6 +59,23 @@ class OrdersApi(BaseAPI):
                     }
                 )
 
+        for position in positions:
+
+            attendee_name_parts = position.get("attendee_name_parts")
+            if attendee_name_parts:
+                position["position_answers_" + "first_name"] = attendee_name_parts.get(
+                    "given_name"
+                )
+                position["position_answers_" + "family_name"] = attendee_name_parts.get(
+                    "family_name"
+                )
+
+            if position.get("answers"):
+                for answer in position["answers"]:
+                    position["position_answers_" + answer["question_identifier"]] = (
+                        answer["answer"]
+                    )
+
         print("Getting items ")
         items = []
         for slug in {order["event_slug"] for order in orders}:
