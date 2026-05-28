@@ -42,7 +42,9 @@ class OrdersApi(BaseAPI):
                     )
                 ]
                 orders_with_payments.extend(order_with_payments)
+            return orders_with_payments
         return orders
+
 
     def get_events_and_orders_and_positions(self, get_payment_details=False):
         orders = self.get_events_and_orders(get_payment_details)
@@ -70,6 +72,7 @@ class OrdersApi(BaseAPI):
                 position["position_answers_" + "family_name"] = attendee_name_parts.get(
                     "family_name"
                 )
+                position.pop("position_attendee_name_parts")
 
             if position.get("position_answers"):
                 for answer in position["position_answers"]:
