@@ -49,8 +49,8 @@ class OrdersApi(BaseAPI):
         return orders
 
 
-    def get_events_and_orders_and_positions(self, get_payment_details=False):
-        orders = self.get_events_and_orders(get_payment_details)
+    def get_events_and_orders_and_positions(self, get_payment_details=False, include_testmode: bool = False, exclude_slugs: list[str] = []):
+        orders = self.get_events_and_orders(get_payment_details, include_testmode=include_testmode, exclude_slugs=exclude_slugs)
         print("Getting Positions ")
 
         positions = []
@@ -101,8 +101,8 @@ class OrdersApi(BaseAPI):
             for pos in positions
         ]
 
-    def get_positions(self, slug: str, filter_by_item_id=None):
-        orders = self.get(slug)
+    def get_positions(self, slug: str, filter_by_item_id=None, include_testmode: bool = False):
+        orders = self.get(slug, include_testmode=include_testmode)
 
         positions = []
         for o in orders:
@@ -113,8 +113,8 @@ class OrdersApi(BaseAPI):
             )
         return positions
 
-    def get_answers(self, slug: str, filter_by_item_id=None):
-        positions = self.get_positions(slug, filter_by_item_id)
+    def get_answers(self, slug: str, filter_by_item_id=None, include_testmode: bool = False):
+        positions = self.get_positions(slug, filter_by_item_id, include_testmode=include_testmode)
         answers = []
         for p in positions:
             answers.extend(p["answers"])
