@@ -9,7 +9,7 @@ class EventsApi(BaseAPI):
 
         return self.client._check_response(r)
 
-    def get_events(self):
+    def get_events(self, exclude_slugs: list[str] = []):
 
         events = self._handle_pagination(self.client.config["events_url"])
         preferred_langs = ["en", "de"]
@@ -24,7 +24,7 @@ class EventsApi(BaseAPI):
                 "backend_url": self.client.config["organizer_url"] + d["slug"],
             }
             for d in events
-            if not "test" in d["slug"]
+            if not any(s in d["slug"] for s in exclude_slugs)
         ]
 
         return events

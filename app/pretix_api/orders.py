@@ -3,18 +3,21 @@ import json
 
 
 class OrdersApi(BaseAPI):
-    def get(self, slug: str):
-        orders = self._handle_pagination(
+    def get(self, slug: str, include_testmode: bool = False):
+        url = (
             self.client.config["events_url"]
             + slug
             + "/orders?include_canceled_positions=true"
         )
+        if include_testmode:
+            url += "&testmode=true"
+        orders = self._handle_pagination(url)
         return orders
 
-    def get_events_and_orders(self, get_payment_details=False):
+    def get_events_and_orders(self, get_payment_details=False, include_testmode: bool = False, exclude_slugs: list[str] = []):
         print("Getting events ")
 
-        events = self.client.events.get_events()
+        events = self.client.events.get_events(exclude_slugs=exclude_slugs)
         print("Getting Orders ")
 
         orders = []
@@ -25,7 +28,7 @@ class OrdersApi(BaseAPI):
                     **event,
                     **{"order_" + k: v for k, v in order.items()},
                 }
-                for order in self.get(event["event_slug"])
+                for order in self.get(event["event_slug"], include_testmode=include_testmode)
             ]
             orders.extend(order)
 
